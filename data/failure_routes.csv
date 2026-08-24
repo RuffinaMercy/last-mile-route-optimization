@@ -1,0 +1,7 @@
+route_id,num_stops,algo_violations,algo_time_seconds,actual_time_seconds,algo_passes_run
+RouteID_16dfbb94-ac9e-46bd-afe8-0b49cea540fd,201,1,28772.6,29166.2,7
+RouteID_03a85c45-30f2-401f-ac53-0f0fdfacd6c5,156,1,34163.5,29519.8,5
+RouteID_1a6fb97c-0be1-475a-bbf6-766a0e1b7e63,183,1,31896.4,31323.8,5
+RouteID_8a651fc6-9062-44b6-9a91-07b054dec2bf,83,1,24702.7,25611.7,2
+RouteID_fdf39434-8bd9-47c5-ae35-c9c3e252e370,172,1,33800.1,32771.9,5
+RouteID_9149675b-2385-4661-a810-7563f1b9cfbb,186,1,32960.6,32096.3,4
