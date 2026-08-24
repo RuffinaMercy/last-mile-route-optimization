@@ -104,3 +104,15 @@ Databricks (Free Edition, serverless) · PySpark · Delta Lake · `ijson` · pan
 ## Acknowledgment
 
 Dataset provided by Amazon.com, Inc. and MIT Center for Transportation & Logistics, released for the Amazon Last Mile Routing Research Challenge (2021).
+
+## Scope and limitations
+
+This project is a **retrospective, data-driven analysis** — it evaluates how the algorithm *would have* performed against historical routes, using historical ground truth. It does not claim production deployment or real-world driver usage.
+
+A genuine rollout would require, at minimum:
+- **Live A/B testing** — comparing algorithm-suggested routes against driver judgment in real conditions, not simulated ones
+- **Real-time data** — this analysis uses historical average travel times; live traffic conditions change minute to minute
+- **Driver adoption considerations** — whether drivers trust and follow an unfamiliar route suggestion is a separate, non-technical problem
+- **A feedback loop** — capturing cases where a driver overrides the algorithm, to improve it over time (see the supervised-learning extension idea below)
+
+This project is best understood as the necessary first step before such a pilot — a way to build a data-backed, quantified case for whether further investment in this direction is justified.
