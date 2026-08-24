@@ -116,3 +116,15 @@ A genuine rollout would require, at minimum:
 - **A feedback loop** — capturing cases where a driver overrides the algorithm, to improve it over time (see the supervised-learning extension idea below)
 
 This project is best understood as the necessary first step before such a pilot — a way to build a data-backed, quantified case for whether further investment in this direction is justified.
+
+## Agentic AI layer
+
+An LLM-driven orchestrator (`agent/orchestrator.py`, using Groq's `openai/gpt-oss-120b` with tool-calling) investigates a route's optimization result autonomously. Given a route ID, it decides which of 4 tools to call — fetching the route's summary, validating it against a safety guardrail, comparing it to the real human driver's performance, and (if issues remain) searching for similar known failure cases — reasoning through each step and producing a grounded, plain-English explanation.
+
+**Design principle: the safety guardrail is enforced in code, not by the LLM.** After every optimization result, an independent check (`validate_route`) confirms that the algorithm's violation count never exceeds the untouched baseline's — this check runs regardless of what the LLM concludes, so a confused or manipulated model can never cause an unsafe result to be reported as safe. This distinction — reasoning delegated to the LLM, safety enforced structurally — is deliberate, and directly informed by [AI safety/security coursework and interest].
+
+Example trace (investigating a route with a residual violation):
+- Correctly distinguished "guardrail passed" (algorithm ≤ baseline) from "fully resolved" (zero violations) — flagging the route as safe-but-needing-review rather than falsely claiming full success
+- Identified 3 similar-sized routes with the same residual-violation pattern, without being explicitly told to look for a pattern
+
+Tested in `tests/test_agent_guardrail.py`, covering: guardrail passes when the algorithm improves or matches the baseline, and guardrail correctly fails if violations were ever worse than baseline (a case that should never occur given the algorithm's own internal guarantee, but is checked independently regardless).
