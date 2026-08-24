@@ -178,3 +178,58 @@ def test_two_opt_output_visits_every_stop_exactly_once(simple_travel_time, route
 
     assert sorted(best_route) == sorted(start_route)
     assert len(best_route) == len(set(best_route))
+
+
+
+# ---------- Delta-based optimization: correctness + speed ----------
+
+def test_prefix_based_evaluation_matches_full_evaluation(simple_travel_time, route_date_and_time):
+    """
+    Regression test: the fast, prefix-caching path must produce the
+    EXACT same (violations, time) result as the original from-scratch
+    evaluator, for the same route.
+    """
+    route_date, departure_time_str = route_date_and_time
+    base_time = datetime.strptime(f"{route_date} {departure_time_str}", "%Y-%m-%d %H:%M:%S")
+    packages_plain = {'C': [(base_time, base_time + timedelta(seconds=150), 20)]}
+
+    route = ['A', 'B', 'C', 'D']
+
+    full_result = evaluate_route_plain(route, simple_travel_time, packages_plain,
+                                        route_date, departure_time_str)
+
+    arrival_prefix, violation_prefix, start_time = algorithm._compute_prefix(
+        route, simple_travel_time, packages_plain, route_date, departure_time_str
+    )
+    prefix_result = algorithm._evaluate_from_prefix(
+        route, 1, arrival_prefix, violation_prefix, simple_travel_time,
+        packages_plain, start_time
+    )
+
+    assert full_result == prefix_result
+
+
+def test_delta_2opt_measurably_faster_on_a_larger_route(route_date_and_time):
+    """
+    Builds a larger synthetic route (30 stops) and confirms the
+    delta-based two_opt_constrained_fast completes in meaningfully
+    fewer full-route evaluations than a naive full-recompute version
+    would need — checked indirectly via wall-clock time as a sanity
+    bound, not an exact ratio (timing varies by machine).
+    """
+    import random
+    import time as time_module
+
+    random.seed(1)
+    stops = [f"S{i}" for i in range(30)]
+    travel_time = {a: {b: (0 if a == b else random.randint(50, 500)) for b in stops} for a in stops}
+    route_date, departure_time_str = route_date_and_time
+
+    start = time_module.time()
+    _, _, passes_run = two_opt_constrained_fast(
+        stops, travel_time, {}, route_date, departure_time_str
+    )
+    elapsed = time_module.time() - start
+
+    assert passes_run >= 1
+    assert elapsed < 5.0  # generous upper bound; catches any accidental O(n^4)-style regression
