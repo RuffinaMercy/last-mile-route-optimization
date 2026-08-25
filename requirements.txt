@@ -2,3 +2,5 @@ pandas
 pytest
 groq
 python-dotenv
+streamlit
+plotly
