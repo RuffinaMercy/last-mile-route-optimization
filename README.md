@@ -2,7 +2,7 @@
 
 A full-stack data engineering and AI project testing whether an algorithm can sequence delivery stops as well as an experienced human driver — using real Amazon delivery data — while never breaking a delivery-time commitment the human respected. Includes an agentic AI layer that investigates optimization results with a code-enforced safety guardrail, and a live interactive dashboard.
 
-**🔗 Live demo:** _add your Streamlit Community Cloud link here after deployment_
+**🔗 Live demo:**(https://last-mile-route-optimization.streamlit.app/)
 
 ## Problem statement
 
